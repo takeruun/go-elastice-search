@@ -4,6 +4,14 @@ type Item {
   description: String!
 }
 
+extend type Query {
+  searchItems(where: ItemWhere): [Item!]!
+}
+
+input ItemWhere {
+  title: String!
+}
+
 extend type Mutation {
   createItem(title: String!, description: String!): Item!
   updateItem(id: ID!, title: String, description: String): Item!
