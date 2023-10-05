@@ -5,7 +5,8 @@ services:
       context: .
       dockerfile: server/Dockerfile
     volumes:
-      - ./server:/go/src/app:cached
+      - ./server:/go/src/server:cached
+      - ./:/go/src
     command: air -c .air.toml
     environment:
       DB_USER: root
@@ -51,6 +52,7 @@ services:
     restart: on-failure:10
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://hasura:secret@db:5432/postgres
+      HASURA_REMOTE_SCHEMA_ENDPOINT: http://server:3000/query
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, query-log
