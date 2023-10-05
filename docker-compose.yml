@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    volumes:
+      - ./server:/go/src/app:cached
+    command: air -c .air.toml
+    environment:
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_HOST: db
+      DB_NAME: go-elastic-search
+    ports:
+      - 3013:3000
+    tty: true
+    stdin_open: true
+    depends_on:
+      - db
+
+  db:
+    platform: linux/arm64
+    image: postgres:13
+    ports:
+      - "15437:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "hasura", "-d", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - type: volume
+        source: db_data
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: hasura
+      POSTGRES_PASSWORD: secret
+      TZ: Asia/Tokyo
+      PGTZ: Asia/Tokyo
+
+  hasura:
+    platform: linux/arm64
+    image: hasura/graphql-engine:v2.26.0.cli-migrations-v3
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure:10
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://hasura:secret@db:5432/postgres
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: secret
+      HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION: graphql-default
+      HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: naming_convention
+
+volumes:
+  db_data:
