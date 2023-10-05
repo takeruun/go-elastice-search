@@ -3,3 +3,9 @@ type Item {
   title: String!
   description: String!
 }
+
+extend type Mutation {
+  createItem(title: String!, description: String!): Item!
+  updateItem(id: ID!, title: String, description: String): Item!
+  deleteItem(id: ID!): Item!
+}

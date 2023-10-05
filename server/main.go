@@ -3,6 +3,7 @@ package main
 import (
 	"app/graph/generated"
 	"app/graph/resolver"
+	"fmt"
 	"log"
 	"os"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-const defaultPort = "8080"
+const defaultPort = "3000"
 
 func main() {
 	port := os.Getenv("PORT")
@@ -38,7 +39,7 @@ func main() {
 		return nil
 	})
 
-	err := e.Start(":%s" + port)
+	err := e.Start(fmt.Sprintf(":%s", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
