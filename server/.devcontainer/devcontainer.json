@@ -12,9 +12,9 @@
   "service": "server",
   // The optional 'workspaceFolder' property is the path VS Code should open by default when
   // connected. This is typically a file mount in .devcontainer/docker-compose.yml
-  "workspaceFolder": "/go/src/app",
+  "workspaceFolder": "/go/src/server",
   "mounts": [
-    "source=${localWorkspaceFolder}/..,target=/go/src.sock,type=bind"
+    "source=${localWorkspaceFolder}/..,target=/go/src,type=bind"
   ],
   // Set *default* container specific settings.json values on container create.
   // Features to add to the dev container. More info: https://containers.dev/features.

@@ -2,7 +2,7 @@ FROM golang:1.19.4-alpine
 
 RUN apk update && apk --no-cache add git build-base
 
-WORKDIR /go/src/app
+WORKDIR /go/src/server
 
 COPY ./server/ .
 
