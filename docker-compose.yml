@@ -9,10 +9,10 @@ services:
       - ./:/go/src
     command: air -c .air.toml
     environment:
-      DB_USER: root
-      DB_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: hasura
+      POSTGRES_PASSWORD: secret
       DB_HOST: db
-      DB_NAME: go-elastic-search
     ports:
       - 3013:3000
     tty: true

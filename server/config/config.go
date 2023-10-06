@@ -25,9 +25,9 @@ func NewConfig() *Config {
 	c := new(Config)
 
 	c.DB.Host = os.Getenv("DB_HOST")
-	c.DB.Username = os.Getenv("DB_USER")
-	c.DB.Password = os.Getenv("DB_PASSWORD")
-	c.DB.DBName = os.Getenv("DB_NAME")
+	c.DB.Username = os.Getenv("POSTGRES_USER")
+	c.DB.Password = os.Getenv("POSTGRES_PASSWORD")
+	c.DB.DBName = os.Getenv("POSTGRES_DB")
 
 	return c
 }
