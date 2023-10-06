@@ -2,13 +2,13 @@ package database
 
 import (
 	"app/config"
-	"app/graph/model"
+	"app/domain"
 )
 
 type ItemDatabaseInterface interface {
-	Find(id string) (*model.Item, error)
-	Create(title string, description string) (*model.Item, error)
-	Update(id string, title *string, description *string) (*model.Item, error)
+	Find(id string) (*domain.Item, error)
+	Create(title string, description string) (*domain.Item, error)
+	Update(id string, title *string, description *string) (*domain.Item, error)
 	Delete(id string) error
 }
 
@@ -20,18 +20,18 @@ func NewItemDatabase(db *config.DB) ItemDatabaseInterface {
 	return &itemDatabase{db: db}
 }
 
-func (d *itemDatabase) Find(id string) (*model.Item, error) {
+func (d *itemDatabase) Find(id string) (*domain.Item, error) {
 	repo := d.db.Connect()
-	var item model.Item
+	var item domain.Item
 	if err := repo.First(&item, id).Error; err != nil {
 		return nil, err
 	}
 	return &item, nil
 }
 
-func (d *itemDatabase) Create(title string, description string) (*model.Item, error) {
+func (d *itemDatabase) Create(title string, description string) (*domain.Item, error) {
 	repo := d.db.Connect()
-	item := model.Item{
+	item := domain.Item{
 		Title:       title,
 		Description: description,
 	}
@@ -41,9 +41,9 @@ func (d *itemDatabase) Create(title string, description string) (*model.Item, er
 	return &item, nil
 }
 
-func (d *itemDatabase) Update(id string, title *string, description *string) (*model.Item, error) {
+func (d *itemDatabase) Update(id string, title *string, description *string) (*domain.Item, error) {
 	repo := d.db.Connect()
-	item := model.Item{
+	item := domain.Item{
 		Title:       *title,
 		Description: *description,
 	}
@@ -57,7 +57,7 @@ func (d *itemDatabase) Update(id string, title *string, description *string) (*m
 
 func (d *itemDatabase) Delete(id string) error {
 	repo := d.db.Connect()
-	if err := repo.Delete(&model.Item{}, id).Error; err != nil {
+	if err := repo.Delete(&domain.Item{}, id).Error; err != nil {
 		return err
 	}
 	return nil

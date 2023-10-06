@@ -63,6 +63,14 @@ func (db *DB) Begin() *gorm.DB {
 	return db.Connection.Begin()
 }
 
+func (db *DB) Commit() *gorm.DB {
+	return db.Connection.Commit()
+}
+
+func (db *DB) Rollback() *gorm.DB {
+	return db.Connection.Rollback()
+}
+
 func (db *DB) Connect() *gorm.DB {
 	return db.Connection
 }
