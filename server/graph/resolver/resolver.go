@@ -14,9 +14,9 @@ type Resolver struct {
 	ItemUsecase usecase.ItemUsecaseInterface
 }
 
-func NewResolver(db *config.DB) *Resolver {
+func NewResolver(db *config.DB, es *config.ElasticSearch) *Resolver {
 	itemDatabase := database.NewItemDatabase(db)
 	return &Resolver{
-		ItemUsecase: usecase.NewItemUsecase(db, itemDatabase),
+		ItemUsecase: usecase.NewItemUsecase(itemDatabase, es),
 	}
 }

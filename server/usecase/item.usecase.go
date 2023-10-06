@@ -4,6 +4,13 @@ import (
 	"app/config"
 	"app/database"
 	"app/graph/model"
+	"bytes"
+	"encoding/json"
+	"strconv"
+)
+
+const (
+	ES_INDEX_KEY = "go-elastic-search_item"
 )
 
 type ItemUsecaseInterface interface {
@@ -14,12 +21,12 @@ type ItemUsecaseInterface interface {
 }
 
 type itemUsecase struct {
-	db           *config.DB
 	itemDatabase database.ItemDatabaseInterface
+	es           *config.ElasticSearch
 }
 
-func NewItemUsecase(db *config.DB, itemDatabase database.ItemDatabaseInterface) ItemUsecaseInterface {
-	return &itemUsecase{db: db, itemDatabase: itemDatabase}
+func NewItemUsecase(itemDatabase database.ItemDatabaseInterface, es *config.ElasticSearch) ItemUsecaseInterface {
+	return &itemUsecase{itemDatabase: itemDatabase, es: es}
 }
 
 func (u *itemUsecase) CreateItem(title string, description string) (*model.Item, error) {
@@ -28,7 +35,26 @@ func (u *itemUsecase) CreateItem(title string, description string) (*model.Item,
 		return nil, err
 	}
 
-	return item, nil
+	document := map[string]interface{}{
+		"title":       item.Title,
+		"description": item.Description,
+	}
+	data, err := json.Marshal(document)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = u.es.Index(ES_INDEX_KEY, bytes.NewReader(data), u.es.Index.WithDocumentID(strconv.Itoa(item.ID)))
+	if err != nil {
+		u.itemDatabase.Delete(strconv.Itoa(item.ID))
+		return nil, err
+	}
+
+	return &model.Item{
+		ID:          strconv.Itoa(item.ID),
+		Title:       item.Title,
+		Description: item.Description,
+	}, nil
 }
 
 func (u *itemUsecase) UpdateItem(id string, title *string, description *string) (*model.Item, error) {
@@ -37,7 +63,11 @@ func (u *itemUsecase) UpdateItem(id string, title *string, description *string) 
 		return nil, err
 	}
 
-	return item, nil
+	return &model.Item{
+		ID:          strconv.Itoa(item.ID),
+		Title:       item.Title,
+		Description: item.Description,
+	}, nil
 }
 
 func (u *itemUsecase) DeleteItem(id string) error {
