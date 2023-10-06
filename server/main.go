@@ -1,6 +1,7 @@
 package main
 
 import (
+	"app/config"
 	"app/graph/generated"
 	"app/graph/resolver"
 	"fmt"
@@ -26,7 +27,11 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &resolver.Resolver{}}))
+	db := config.NewDB()
+	es := config.NewElasticSearch()
+	resolver := resolver.NewResolver(db, es)
+
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: resolver}))
 
 	playgroundHandler := playground.Handler("GraphQL", "/query")
 
