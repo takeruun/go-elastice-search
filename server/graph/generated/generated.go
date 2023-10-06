@@ -67,7 +67,7 @@ type MutationResolver interface {
 	Empty(ctx context.Context) (*string, error)
 	CreateItem(ctx context.Context, title string, description string) (*model.Item, error)
 	UpdateItem(ctx context.Context, id string, title *string, description *string) (*model.Item, error)
-	DeleteItem(ctx context.Context, id string) (*model.Item, error)
+	DeleteItem(ctx context.Context, id string) (string, error)
 }
 type QueryResolver interface {
 	Empty(ctx context.Context) (*string, error)
@@ -302,7 +302,7 @@ input ItemWhere {
 extend type Mutation {
   createItem(title: String!, description: String!): Item!
   updateItem(id: ID!, title: String, description: String): Item!
-  deleteItem(id: ID!): Item!
+  deleteItem(id: ID!): String!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -776,9 +776,9 @@ func (ec *executionContext) _Mutation_deleteItem(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Item)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNItem2ᚖappᚋgraphᚋmodelᚐItem(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteItem(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -788,15 +788,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteItem(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Item_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Item_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Item_description(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Item", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
