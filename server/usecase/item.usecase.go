@@ -212,6 +212,10 @@ func (u *itemUsecase) SearchItems(ctx context.Context, where *model.ItemWhere) (
 		ids = append(ids, id)
 	}
 
+	if len(ids) == 0 {
+		return nil, totalCount, nil
+	}
+
 	items, err := u.itemDatabase.Search(ids)
 
 	var itemsModel []*model.Item
