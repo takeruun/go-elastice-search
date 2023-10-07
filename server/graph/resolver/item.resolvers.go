@@ -42,7 +42,12 @@ func (r *mutationResolver) DeleteItem(ctx context.Context, id string) (string, e
 
 // SearchItems is the resolver for the searchItems field.
 func (r *queryResolver) SearchItems(ctx context.Context, where *model.ItemWhere) ([]*model.Item, error) {
-	panic(fmt.Errorf("not implemented: SearchItems - searchItems"))
+	items, _, err := r.ItemUsecase.SearchItems(ctx, where)
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }
 
 // !!! WARNING !!!

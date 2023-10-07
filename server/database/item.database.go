@@ -11,6 +11,7 @@ type ItemDatabaseInterface interface {
 	Create(title string, description string) (*domain.Item, error)
 	Update(id string, title *string, description *string) (*domain.Item, error)
 	Delete(id string) error
+	Search(ids []int) ([]*domain.Item, error)
 }
 
 type itemDatabase struct {
@@ -71,4 +72,13 @@ func (d *itemDatabase) Delete(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (d *itemDatabase) Search(ids []int) ([]*domain.Item, error) {
+	repo := d.db.Connect()
+	var items []*domain.Item
+	if err := repo.Find(&items, ids).Error; err != nil {
+		return nil, err
+	}
+	return items, nil
 }
