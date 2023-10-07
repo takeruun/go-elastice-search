@@ -47,3 +47,8 @@ db.reset: db.drop db.create	db.migrate
 
 .PHONY: db.reset.test
 db.reset.test: db.drop.test db.create.test db.migrate.test
+
+.PHONY: setup_es
+setup_es:
+	docker-compose up -d elasticsearch
+	curl -XPUT 'http://localhost:9200/go-elastic-search_item' -H 'kbn-xsrf: reporting' -H 'Content-Type: application/json'

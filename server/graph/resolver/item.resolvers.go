@@ -12,22 +12,42 @@ import (
 
 // CreateItem is the resolver for the createItem field.
 func (r *mutationResolver) CreateItem(ctx context.Context, title string, description string) (*model.Item, error) {
-	panic(fmt.Errorf("not implemented: CreateItem - createItem"))
+	item, err := r.ItemUsecase.CreateItem(title, description)
+	if err != nil {
+		return nil, err
+	}
+
+	return item, nil
 }
 
 // UpdateItem is the resolver for the updateItem field.
 func (r *mutationResolver) UpdateItem(ctx context.Context, id string, title *string, description *string) (*model.Item, error) {
-	panic(fmt.Errorf("not implemented: UpdateItem - updateItem"))
+	item, err := r.ItemUsecase.UpdateItem(id, title, description)
+	if err != nil {
+		return nil, err
+	}
+
+	return item, nil
 }
 
 // DeleteItem is the resolver for the deleteItem field.
-func (r *mutationResolver) DeleteItem(ctx context.Context, id string) (*model.Item, error) {
-	panic(fmt.Errorf("not implemented: DeleteItem - deleteItem"))
+func (r *mutationResolver) DeleteItem(ctx context.Context, id string) (string, error) {
+	err := r.ItemUsecase.DeleteItem(id)
+	if err != nil {
+		return "", err
+	}
+
+	return "success", nil
 }
 
 // SearchItems is the resolver for the searchItems field.
 func (r *queryResolver) SearchItems(ctx context.Context, where *model.ItemWhere) ([]*model.Item, error) {
-	panic(fmt.Errorf("not implemented: SearchItems - searchItems"))
+	items, _, err := r.ItemUsecase.SearchItems(ctx, where)
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }
 
 // !!! WARNING !!!

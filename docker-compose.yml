@@ -9,10 +9,10 @@ services:
       - ./:/go/src
     command: air -c .air.toml
     environment:
-      DB_USER: root
-      DB_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: hasura
+      POSTGRES_PASSWORD: secret
       DB_HOST: db
-      DB_NAME: go-elastic-search
     ports:
       - 3013:3000
     tty: true
@@ -60,5 +60,36 @@ services:
       HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION: graphql-default
       HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: naming_convention
 
+  elasticsearch:
+    platform: linux/arm64
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - type: volume
+        source: es_data
+        target: /usr/share/elasticsearch/data
+    profiles:
+      - es
+    mem_limit: 5368709120 # 5GB
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    platform: linux/arm64
+    image: docker.elastic.co/kibana/kibana:8.5.3
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    profiles:
+      - es
+
 volumes:
   db_data:
+  es_data:
