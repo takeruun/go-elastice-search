@@ -63,6 +63,20 @@ func (u *itemUsecase) UpdateItem(id string, title *string, description *string) 
 		return nil, err
 	}
 
+	document := map[string]interface{}{
+		"title":       item.Title,
+		"description": item.Description,
+	}
+	data, err := json.Marshal(document)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = u.es.Index(ES_INDEX_KEY, bytes.NewReader(data), u.es.Index.WithDocumentID(strconv.Itoa(item.ID)))
+	if err != nil {
+		return nil, err
+	}
+
 	return &model.Item{
 		ID:          strconv.Itoa(item.ID),
 		Title:       item.Title,
@@ -72,6 +86,11 @@ func (u *itemUsecase) UpdateItem(id string, title *string, description *string) 
 
 func (u *itemUsecase) DeleteItem(id string) error {
 	err := u.itemDatabase.Delete(id)
+	if err != nil {
+		return err
+	}
+
+	_, err = u.es.Delete(ES_INDEX_KEY, id)
 	if err != nil {
 		return err
 	}

@@ -3,6 +3,7 @@ package database
 import (
 	"app/config"
 	"app/domain"
+	"strconv"
 )
 
 type ItemDatabaseInterface interface {
@@ -43,12 +44,21 @@ func (d *itemDatabase) Create(title string, description string) (*domain.Item, e
 
 func (d *itemDatabase) Update(id string, title *string, description *string) (*domain.Item, error) {
 	repo := d.db.Connect()
-	item := domain.Item{
-		Title:       *title,
-		Description: *description,
+	numId, _ := strconv.Atoi(id)
+	var item domain.Item = domain.Item{
+		ID: numId,
+	}
+	if title != nil {
+		item.Title = *title
+	}
+	if description != nil {
+		item.Description = *description
 	}
 
-	if err := repo.Model(&item).Where("id = ?", id).Updates(item).Error; err != nil {
+	if err := repo.
+		Model(&domain.Item{}).
+		Where("id = ?", id).
+		Updates(&item).Error; err != nil {
 		return nil, err
 	}
 
