@@ -216,14 +216,10 @@ func (u *itemUsecase) SearchItems(ctx context.Context, where *model.ItemWhere) (
 		return nil, totalCount, nil
 	}
 
-	items, err := u.itemDatabase.Search(ids)
-
 	var itemsModel []*model.Item
-	for _, item := range items {
+	for _, id := range ids {
 		itemsModel = append(itemsModel, &model.Item{
-			ID:          strconv.Itoa(item.ID),
-			Title:       item.Title,
-			Description: item.Description,
+			ID: strconv.Itoa(id),
 		})
 	}
 
