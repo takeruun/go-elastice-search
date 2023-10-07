@@ -68,6 +68,10 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+    volumes:
+      - type: volume
+        source: es_data
+        target: /usr/share/elasticsearch/data
     profiles:
       - es
     mem_limit: 5368709120 # 5GB
@@ -88,3 +92,4 @@ services:
 
 volumes:
   db_data:
+  es_data:
