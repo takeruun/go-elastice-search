@@ -10,10 +10,10 @@
             to_source:
               field_mapping:
                 id: id
-              relationship_type: array
+              relationship_type: object
               source: default
               table:
                 name: items
                 schema: public
-          name: server_item
+          name: item
       type_name: Item
