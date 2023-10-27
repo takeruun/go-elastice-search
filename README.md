@@ -1,6 +1,9 @@
 # go ElasticSearch on hasura
 go で　ElasticSearch を使い、hasura 経由でデータ検索するサンプルです。
 
+## 立ち上げ
+
+
 ## 使い方
 `query searchItem` を叩く。
 
